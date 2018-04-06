@@ -1,0 +1,33 @@
+{
+  "name": "auto-deploy-wxapp",
+  "version": "1.0.0",
+  "description": "Auto deploy wxapp to wx editor",
+  "author": "zebin",
+  "license": "Apache-2.0",
+  "permissions": [
+    "contextMenus",
+    "storage"
+  ],
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_title": "Auto deploy wxapp to wx editor",
+    "default_popup": "html/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/admin/index.html"
+      ],
+      "js": [
+        "js/content-script.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "manifest_version": 2
+}

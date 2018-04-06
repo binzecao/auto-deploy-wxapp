@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'none'; style-src 'unsafe-inline'; child-src https:">
+    <title>submit your information</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/socket.io.js"></script>
+    <style>
+        html,
+        body {
+            font-size: 14px;
+        }
+
+        .container {
+            margin-top: 10px;
+        }
+
+        form label {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h4>Fill the data</h4>
+        <div class="row">
+            <div class="col-md">
+                <form onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="txPackageUrl">Package Url</label>
+                        <input type="text" class="form-control form-control-sm" id="txPackageUrl" name="packageUrl" aria-describedby="packageUrl"
+                            placeholder="eg: http://xxx.com/comdata/22333/wxapp_66.zip?v=43485793937">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="txAppId">App Id</label>
+                            <input type="text" class="form-control form-control-sm" id="txAppId" name="appId" aria-describedby="txAppId" placeholder="eg: wx123445sfdf45"
+                                readonly>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="txProjectName">Project Name</label>
+                            <input type="text" class="form-control form-control-sm" id="txProjectName" name="projectName" placeholder="eg: hangye 3344 zhengshi">
+                            <small id="emailHelp" class="form-text text-muted">Make sure the project name is not repeat.</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="txProjectPath">Project Path</label>
+                        <input type="text" class="form-control form-control-sm" id="txProjectPath" name="projectPath" placeholder="eg: c:\xiaochengxu\">
+                        <!-- <small id="emailHelp" class="form-text text-muted">It is a real path.</small> -->
+                    </div>
+                    <div class="form-group">
+                        <label for="txWxEditorDir">Weixin Editor Directory</label>
+                        <input type="text" class="form-control form-control-sm" id="txWxEditorDir" name="wxEditorDir" placeholder="eg: E:\Program Files (x86)\Tencent\微信web开发者工具">
+                    </div>
+                    <div class="form-group">
+                        <label for="txSiteBaseUrl">SiteBaseUrl</label>
+                        <input type="text" class="form-control form-control-sm" id="txSiteBaseUrl" name="siteBaseUrl" placeholder="eg: https://wxapp.yz168.cc">
+                        <small id="emailHelp" class="form-text text-muted">Want to use the default value, let it be empty.</small>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmModal">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalTitle" aria-hidden="true"
+        data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Check the data carefully, and now, submit?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnSubmit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="progressModalTitle" aria-hidden="true"
+        data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="progressModalTitle">Progress</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/form.js"></script>
+</body>
+
+</html>

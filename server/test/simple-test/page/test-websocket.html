@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title></title>
+  <script src="socket.io.js"></script>
+</head>
+
+<body>
+  <div>
+    <input type="text" value="" id="txtMsg" />
+    <button id="btnSend">发送</button>
+    <button id="btnAutoSend">发送</button>
+    <hr>
+    <div id="msgBoard"></div>
+  </div>
+  <script>
+    var socket = io.connect('ws://localhost:8025/');
+
+    /*
+        socket.on('sync msg', function (data) {
+          //console.log(data);
+          addMsg(data.msg)
+        });
+    
+        document.getElementById('btnSend').onclick = function () {
+          socket.emit('user msg', { msg: document.getElementById('txtMsg').value || '' });
+        }
+    */
+
+    socket.on('msg', function (data) {
+      addMsg(data.msg)
+    });
+
+    document.getElementById('btnSend').onclick = function () {
+      socket.emit('msg', { msg: document.getElementById('txtMsg').value || '' });
+    }
+
+    var count = 0;
+    document.getElementById('btnAutoSend').onclick = function () {
+      // for (var i = 0; i < 1000; i++) {
+      //   socket.emit('msg', { msg: i });
+      //   document.body.scrollTop = 1000000000;
+      // }
+
+      setInterval(function () {
+        count++;
+        socket.emit('msg', { msg: count });
+        document.body.scrollTop = 1000000000;
+      }, 100);
+    }
+
+    function addMsg(msg) {
+      document.getElementById('msgBoard').innerHTML += msg + '<br>';
+    }
+
+
+  </script>
+</body>
+
+</html>
