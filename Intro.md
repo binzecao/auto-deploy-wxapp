@@ -124,6 +124,17 @@ sendMessageToContentScript({ cmd: 'aa', msg: 'bb'}, (data) => { showForm(data) }
 使用mocha做单元测试。
 
 
+<br>
+<br>
+
+### Token
+
+使用token校验，防止重复提交
+
+后端设置全局唯一token，**服务启动**或者**成功执行完一次自动部署流程**，均会刷新token，并且将这个token推送到所有socket中。
+
+前端监听**refreshToken**事件，用作接收后端发送的最新token，然后每次提交数据时，将这个token一起提交。
+
 
 
 
