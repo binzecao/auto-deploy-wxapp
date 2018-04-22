@@ -5,7 +5,11 @@ chrome.contextMenus.create({
   type: 'normal',
   title: 'open in wx editor', // 右键标题
   contexts: ['page', 'link'], // 限制出现范围
-  documentUrlPatterns: ['*://*/admin/index.html'], // 只在此页面右键菜单  
+  documentUrlPatterns: [
+    '*://*/admin/index.html',
+    '*://*/home/shopadmin*/',
+    '*://*/home/siteadmin*/'
+  ], // 只在此页面右键菜单  
   onclick: function () {
     /* 这样是不行的，因为这个js执行在background.html，所以没有这些元素
     var projectName = document.getElementsByName('tbName')[0].value;

@@ -1,6 +1,6 @@
 {
   "name": "auto-deploy-wxapp-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A websocket server for auto deploy the YunZhi wxapp to the weixin editor",
   "main": "index.js",
   "bin": "index.js",
