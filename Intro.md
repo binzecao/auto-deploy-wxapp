@@ -129,12 +129,19 @@ sendMessageToContentScript({ cmd: 'aa', msg: 'bb'}, (data) => { showForm(data) }
 
 ### Token
 
-使用token校验，防止重复提交
+使用token校验，防止单个socket重复提交。
 
-后端设置全局唯一token，**服务启动**或者**成功执行完一次自动部署流程**，均会刷新token，并且将这个token推送到所有socket中。
+每次提交数据前，都要从服务端获取最新的token，然后再提交数据。
 
-前端监听**refreshToken**事件，用作接收后端发送的最新token，然后每次提交数据时，将这个token一起提交。
+token是用作防止当前socket重复请求submit data接口。
 
+<br>
+<br>
 
+### processRunning（是否正在执行流程）全局参数
 
+服务端增加一个 **processRunning（是否正在执行流程）** 的全局变量。
 
+如果正在执行中，socket提交数据的token即使是正确的，都拒绝执行下一步，并且返回"系统繁忙"提示。
+
+这是用来控制多个socket的并发请求submit data接口，保证一个服务只同时处理一个流程。

@@ -1,5 +1,4 @@
 var socket = null;
-var token = '';
 
 function getUrlParams() {
     var search = window.location.search;
@@ -48,10 +47,14 @@ function submitData() {
     cacheData('projectPath', $('[name=projectPath]').val());
     cacheData('siteBaseUrl', $('[name=siteBaseUrl]').val());
     cacheData('wxEditorDir', $('[name=wxEditorDir]').val());
-    var params = serializeObject('form');
-    params.token = token;
     socket = getSocket();
-    socket.emit('submit data', params);
+    socket.once('get token', function (data) {
+        token = data.token || '';
+        var params = serializeObject('form');
+        params.token = token;
+        socket.emit('submit data', params);
+    });
+    socket.emit('get token');
 }
 
 function listen() {
@@ -86,9 +89,6 @@ function getSocket() {
         });
         socket.on('error', function (data) {
             showProgressText('<font color=red>Socket: error</font>');
-        });
-        socket.on('refreshToken', function (data) {
-            token = data.token || '';
         });
     }
     socket.open();

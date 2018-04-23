@@ -1,68 +1,57 @@
 var AutoDeploy = require("./lib/auto-deploy");
 var logger = require("./lib/logger")('ws-server');
 var socketIo = require('socket.io');
+var tokenUtil = require("./lib/token-utility");
 
 let port = 8025;
 let path = '/auto-deploy';
 
 /**
- * 创建token
+ * 是否正在执行流程
  */
-let genrateToken = () => {
-  return (new Date()).getTime() + '' + parseInt(Math.random() * 100000);
-}
+let processRunning = false;
 
 /**
- * 服务端唯一的token，用作保证只有一个请求能够处理自动部署的流程
+ * 获取socket的token的key值
+ * @param {object} socket 
  */
-let uniqueToken = null;
+let getTokenKey = (socket) => {
+  return 'socket_' + socket.id;
+}
 
 /**
  * 检查提交的数据
  * @param {object} socket 链接
  * @param {object} data 提交过来的数据
+ * @returns {boolean}
  */
 let checkSubmitData = (socket, data) => {
-  // 验证token
-  if (!data.token || !uniqueToken) {
-    let errMsg = 'Token is empty, please get the token first';
-    logger.error(errMsg);
-    socket.emit('progress', { msg: errMsg, status: 1 });
-    return;
-  }
-
-  if (data.token != uniqueToken) {
-    let errMsg = 'Do not submit repeatly';
-    logger.error(errMsg);
-    socket.emit('progress', { msg: errMsg, status: 1 });
-    return;
-  }
-
-  // 判断接收信息是否为json格式
   try {
-    let dataStr = JSON.stringify(data);
-    // 日志记录
-    logger.info('submit data url: ' + socket.request.url + ', data: ' + dataStr);
+    // 验证token
+    if (!tokenUtil.checkToken(getTokenKey(socket), data.token)) {
+      throw new Error('Do not submit data repleatly.');
+    }
+
+    // 流程执行中
+    if (processRunning) {
+      throw new Error('The process is running, wait a moment then retry it.');
+    }
+
+    // 判断接收信息是否为json格式
+    try {
+      let dataStr = JSON.stringify(data);
+      logger.info('submit data url: ' + socket.request.url + ', data: ' + dataStr);
+    } catch (ex) {
+      throw new Error('The submitting data is not in the json format.');
+    }
+
+    return true;
   } catch (ex) {
-    socket.emit('progress', { msg: 'The submitting data is not in the json format', status: 1 });
-    return;
+    logger.error(ex.message);
+    socket.emit('progress', { msg: ex.message, status: 1 });
+    return false;
   }
 };
-
-/**
- * 刷新token，并且推送到每个链接
- */
-let refreshToken = (io) => {
-  uniqueToken = genrateToken();
-  emitToken(io);
-}
-
-/**
- * 将token推送到每个链接
- */
-let emitToken = (io) => {
-  io.emit('refreshToken', { token: uniqueToken, status: 0 });
-}
 
 /**
  * 启动服务
@@ -74,13 +63,28 @@ let startServer = () => {
     // 日志记录
     logger.info('connect: ' + socket.request.url);
 
-    // 推送最新的token
-    emitToken(io);
+    // 监听请求token事件
+    socket.on('get token', (data) => {
+      // 生成token
+      let token = tokenUtil.getTokenIfNullCreated('socket_' + socket.id);
+      // 做日志
+      logger.info('create new token: ' + token.getVal());
+      // 发送新的token值给客户端
+      socket.emit('get token', { token: token.getVal(), status: 0 });
+    });
 
     // 监听提交信息
     socket.on('submit data', (data) => {
       // 检查提交的数据
-      checkSubmitData(socket, data);
+      if (!checkSubmitData(socket, data)) {
+        return;
+      }
+
+      // 设置流程执行中，阻止其他请求执行流程
+      processRunning = true;
+
+      // 刷新token值，防止同一个socket重复提交
+      tokenUtil.refreshTokenVal(getTokenKey(socket));
 
       // 返回信息给客户端
       socket.emit('progress', { msg: 'Starting the process and wait a moment...', status: 0 });
@@ -96,12 +100,20 @@ let startServer = () => {
         .prepare()
         .then(() => {
           instance.open();
+          // 已经完成，响应成功信息
           socket.emit('progress', { msg: 'finish', status: 2 });
-          refreshToken(io);
+          // 设置流程未在执行中，允许其他请求执行流程
+          processRunning = false;
+          // 清除token，防止重复提交
+          tokenUtil.removeToken(getTokenKey(socket));
         })
         .catch((err) => {
+          // 流程执行失败，响应错误
           socket.emit('progress', { msg: err + '', status: 1 });
-          refreshToken(io);
+          // 设置流程未在执行中，允许其他请求执行流程
+          processRunning = false;
+          // 清除token，防止重复提交
+          tokenUtil.removeToken(getTokenKey(socket));
         });
     });
   });
