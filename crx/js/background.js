@@ -7,8 +7,8 @@ chrome.contextMenus.create({
   contexts: ['page', 'link'], // 限制出现范围
   documentUrlPatterns: [
     '*://*/admin/index.html',
-    '*://*/home/shopadmin*/',
-    '*://*/home/siteadmin*/'
+    '*://*/home/shopadmin*',
+    '*://*/home/siteadmin*'
   ], // 只在此页面右键菜单  
   onclick: function () {
     /* 这样是不行的，因为这个js执行在background.html，所以没有这些元素

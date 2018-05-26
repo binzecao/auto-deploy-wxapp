@@ -473,7 +473,7 @@ class AutoDeploy {
     // 执行命令
     child_process.exec(cmdStr, (err, stdout, stderr) => {
       if (stdout) {
-        logger.log('msg: ' + stdout);
+        logger.info('msg: ' + stdout);
       }
       if (err) {
         logger.error('err: ' + err);
@@ -490,8 +490,8 @@ class AutoDeploy {
    * 打开编辑器工具
    */
   open() {
-    this.openByBat();
-    // this.openByCmd();
+    // this.openByBat();
+    this.openByCmd();
   }
 }
 

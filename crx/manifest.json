@@ -1,8 +1,13 @@
 {
   "name": "auto-deploy-wxapp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Auto deploy wxapp to wx editor",
   "author": "zebin",
+  "icons": {
+    "16": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
+  },
   "permissions": [
     "contextMenus",
     "storage"
@@ -21,8 +26,8 @@
     {
       "matches": [
         "*://*/admin/index.html",
-        "*://*/home/shopadmin*/",
-        "*://*/home/siteadmin*/"
+        "*://*/home/shopadmin*",
+        "*://*/home/siteadmin*"
       ],
       "js": [
         "js/content-script.js"

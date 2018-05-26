@@ -6,7 +6,7 @@ require('winston-daily-rotate-file');
 class Logger {
   constructor(options = {}) {
     options = options || {};
-    this.logLevel = options.logLevel || 'info';
+    this.logLevel = options.logLevel || 'error';
     this.logPath = options.logPath || path.resolve(process.cwd(), 'logs');
     this.logName = options.logName || '';
     this.outputType = options.outputType || [0, 1];
@@ -76,7 +76,17 @@ class WinstonLogger extends Logger {
     // 控制台(npm test 不输出)
     let isInTest = process.env.npm_lifecycle_event && process.env.npm_lifecycle_event.toUpperCase() == 'TEST';
     if (this.outputType.indexOf(1) > -1 && !isInTest) {
-      transports.push(new (winston.transports.Console)({ level: this.logLevel }));
+      // 控制台日志输出级别，以命令行指定的优先。
+      let level = this.logLevel;
+      if (Array.isArray(process.argv)) {
+        let inputArgs = process.argv.slice(2);
+        inputArgs.forEach(arg => {
+          if (/--debug=1/i.test(arg)) {
+            level = 'debug';
+          }
+        });
+      }
+      transports.push(new (winston.transports.Console)({ level: level }));
     }
 
     // 创建实例

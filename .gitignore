@@ -2,3 +2,9 @@
 /server/node_modules
 /server/logs
 /dist/server/logs
+crx.crx
+crx.pem
+crx.zip
+crx.rar
+key.pem
+auto-deploy-wxapp.*
