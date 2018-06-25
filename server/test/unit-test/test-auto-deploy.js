@@ -16,7 +16,8 @@ describe('test-auto-deploy', () => {
   let wxEditorDir = '';
 
   beforeEach(() => {
-    packageUrl = 'http://bin1.test.72dns.net/comdata/1715/wxapp_43.zip?rand=0.3551965759371303';
+    // packageUrl = 'http://bin1.test.72dns.net/comdata/1715/wxapp_43.zip?rand=0.3551965759371303';
+    packageUrl = 'https://ceshi.yz168.cc/comdata/6688/wxapp_2.zip?rand=0.02753800315908017';
     projectPath = 'c:\\aaaaaaa';
     projectName = 'hello wxapp';
     appId = 'wx895687cc383444';

@@ -8,6 +8,7 @@
 // 执行bat文件打开项目
 
 var http = require("http");
+var https = require("https");
 var fs = require("fs");
 var path = require("path");
 var child_process = require('child_process');
@@ -220,7 +221,8 @@ class AutoDeploy {
 
       // 下载
       let fd = null;
-      http.get(this.packageUrl, async (res) => {
+      var request = this.packageUrl.indexOf('https') == 0 ? https : http;
+      request.get(this.packageUrl, async (res) => {
         fd = fs.openSync(projectFilePath, 'w');
         res.on('data', (chunk) => {
           fs.writeSync(fd, chunk, 0, chunk.length);
